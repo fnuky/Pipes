@@ -7,23 +7,16 @@
 //
 
 #include <stdio.h>
-
-/*****************************************************************************
- Excerpt from "Linux Programmer's Guide - Chapter 6"
- (C)opyright 1994-1995, Scott Burkett
- *****************************************************************************
- MODULE: pipe.c
- *****************************************************************************/
-
-#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <string.h>
 
 int main(void)
 {
-    int     fd[2], nbytes;
+    int     fd[2];
+    size_t  nbytes;
     pid_t   childpid;
-    char    string[] = "Hello, world!\n";
+    char    *string = "Hello, world!\n";
     char    readbuffer[80];
     
     pipe(fd);
@@ -31,7 +24,7 @@ int main(void)
     if((childpid = fork()) == -1)
     {
         perror("fork");
-        exit(1);
+        return 0;
     }
     
     if(childpid == 0)
@@ -41,7 +34,7 @@ int main(void)
         
         /* Send "string" through the output side of pipe */
         write(fd[1], string, (strlen(string)+1));
-        exit(0);
+        return 0;
     }
     else
     {
@@ -53,6 +46,6 @@ int main(void)
         printf("Received string: %s", readbuffer);
     }
     
-    return(0);
+    return 0;
 }
 
